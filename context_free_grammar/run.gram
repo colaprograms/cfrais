@@ -1,0 +1,52 @@
+run {
+    COMPUTER
+    RUN
+    PROGRAM
+    program_name
+}
+
+program_name            POTATO
+
+program_name            LASAGNA
+
+program_name            greek_letter numbers
+
+greek_letter*4	ALPHA
+greek_letter*4	BETA
+greek_letter*4	GAMMA
+greek_letter*4	DELTA
+greek_letter	EPSILON
+greek_letter	ZETA
+greek_letter	ETA
+greek_letter	THETA
+greek_letter	IOTA
+greek_letter	KAPPA
+greek_letter	LAMBDA
+greek_letter	MU
+greek_letter	NU
+greek_letter	XI
+greek_letter	OMICRON
+greek_letter	PI
+greek_letter	RHO
+greek_letter	SIGMA
+greek_letter	TAU
+greek_letter	UPSILON
+greek_letter	PHI
+greek_letter	CHI
+greek_letter	PSI
+greek_letter	OMEGA
+
+
+
+numbers*2       number_09
+numbers         number_09 numbers
+number_09   ZERO
+number_09	ONE
+number_09	TWO
+number_09	THREE
+number_09	FOUR
+number_09	FIVE
+number_09	SIX
+number_09	SEVEN
+number_09	EIGHT
+number_09	NINE

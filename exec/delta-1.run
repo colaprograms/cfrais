@@ -1,0 +1,111 @@
+#!/home/pi/chat/env/bin/python
+
+import json
+import urllib.request
+import subprocess
+import traceback
+import os
+import time
+import random
+
+def tts(zz):
+    subprocess.run(["/home/pi/chat/tts", zz])
+
+def get_json():
+    URLS = "https://kustom.radio-canada.ca/coronavirus/canada_quebec_montreal"
+    print("request", URLS)
+    reques = urllib.request.urlopen(URLS)
+    assert reques.getcode() == 200
+    out = reques.read().decode()
+    return json.loads(out)
+
+def get():
+    j = get_json()
+    assert len(j) == 1
+    assert j[0]['Key'] == "canada_quebec_montreal"
+    return {
+        'Cases': j[0]['Confirmed'],
+        'Deaths': j[0]['Deaths'],
+        'History': j[0]['History'],
+    }
+
+    # {'Recov.': '9,268', 'Province': 'Quebec', 'Per k': '33.2', 'Tests': '283,081', 'Active': '24,932', 'Per m': '326.3', 'Deaths': '2,786', 'Population': '8,537,674', 'Cases': '36,986', 'Ref.': '[30]'}
+
+def run(what):
+    cases = what['Cases']
+    deat = what['Deaths']
+    def parse(zz):
+        zz = zz.replace(",", "")
+        return int(zz)
+    cases = parse(cases)
+    deat = parse(deat)
+
+    history = what['History']
+    history.sort(key=lambda z: z['Date'], reverse=True) # backwards it
+    def timeminus(days):
+        return time.strftime("%Y-%m-%d", time.localtime(time.time() - days))
+    def test(jj):
+        actual = history[jj]['Date']
+        expect = timeminus(jj)
+        if actual != expect:
+            ff = open("/home/pi/chat/log/delta-1/covidcasf.py-error", "w")
+            ff.write("problem with the %d day of history\n" % jj)
+            ff.write("%s != %s\n" % (actual, expect))
+            ff.write("data: %s\n" % history)
+            return "The data I got from the website does not match my assumptions.\n" \
+                "It has been copied to the error file."
+    test(0), test(1), test(7)
+    CONFIRMED_KEY = 'C'
+    confirmed = lambda j: int(history[j][CONFIRMED_KEY])
+    lastday = confirmed(0) - confirmed(1)
+    lastweek = confirmed(0) - confirmed(7)
+    if lastday < 0 or lastweek < 0:
+        return "Good afternoon.\n" \
+            "This was supposed to be the covid report,\n" \
+            "but some amusing rogue at Radio Canada has given me data that says people are returning from the dead.\n" \
+            "Therefore, we will instead have twenty seconds of humming.\n" \
+            "\n" \
+            "Hum hum hum um mumm hm hm hum hum hum hum hum,\n" \
+            "la da da da di da da da du da di da da."
+    if lastday == 0:
+        prefix = "My sincere apologies, but the covid statistics do not seem to be up to date yet.\n" + \
+            "I shall give you the numbers from yesterday."
+        lastweek = confirmed(1) - confirmed(8)
+    else:
+        pass
+        #DATA_PHONEME = r'<phoneme ph="\"d{:t@"/>'
+        prefix = "Download complete. Reading the data.\n" + \
+            "Subtracting the number of cases last week from the number of cases today.\n" + \
+            "Dividing by seven.\n" + \
+            ("Hang on, this is a little tricky.\n" if random.random() < 0.1 else "")
+
+    import inflect
+    eng = inflect.engine()
+    cases, deat = [eng.number_to_words(_) for _ in (cases, deat)]
+    if lastweek == 0:
+        casesperday = "There were no confirmed infections in Montreal within the last week."
+    elif lastweek < 7:
+        casesperday = "There were %d confirmed infections in Montreal within the last week." % lastweek
+    else:
+        casesperday = int(lastweek / 7)
+        if casesperday == 1:
+            casesperday = "Montreal saw one infection per day in the last week."
+        else:
+            casesperday = "Montreal saw about %s infections per day in the last week." % eng.number_to_words(casesperday)
+    return prefix + "\n" + casesperday
+
+if __name__ == "__main__":
+    try:
+        tts("You would like the up-to-date statistics on the novel coronavirus, would you?")
+        tts("Downloading them from the Radio-Canada website now.")
+        what = get()
+        zz = run(what)
+        print(zz)
+    except:
+        zz = b"Error in covid case parser; please check."
+        ff = open("/home/pi/chat/log/delta-1/covidcasf.py-error", "w")
+        traceback.print_exc(file=ff)
+    for line in zz.split("\n"):
+        if line == "":
+            pass
+        subprocess.run(["/home/pi/chat/tts", line])

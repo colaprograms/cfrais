@@ -1,0 +1,2 @@
+#!/bin/bash
+aplay -D sysdefault:CARD=Device $1

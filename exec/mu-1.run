@@ -1,0 +1,19 @@
+#!/bin/bash
+
+PID=/home/pi/chat/log/mu-1/mu-1.pid
+
+if test -e "$PID"
+then
+    /home/pi/chat/tts "It appears that collapsar is already running."
+    exit;
+fi;
+
+echo $$ > "$PID"
+
+/home/pi/chat/tts "I am running the collapsar program on card."
+
+/usr/bin/ssh pi@192.168.1.141 'cd /mnt/sda1/animes/stealer; ./collapsar</dev/null>&/dev/null'
+
+/home/pi/chat/tts "Collapsar program has exited."
+echo "deleting $PID"
+rm "$PID"

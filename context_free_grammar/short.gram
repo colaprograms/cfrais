@@ -1,0 +1,32 @@
+short*6 yes
+short*6 no
+short*11 computer
+short please_repeat
+short end_record
+short cancel_record
+short thanks
+short request_record
+
+yes YES
+yes YEAH
+yes AFFIRMATIVE
+
+no NO
+no NOPE
+no NEGATIVE
+
+computer COMPUTER
+
+end_record END RECORDING
+end_record END RECORD
+cancel_record CANCEL RECORDING
+cancel_record CANCEL RECORD
+request_record COMPUTER PLEASE START RECORDING
+
+please_repeat WHAT
+please_repeat SORRY WHAT
+please_repeat SORRY COULD YOU SAY THAT AGAIN
+please_repeat SORRY COULD YOU REPEAT THAT
+
+thanks THANKS
+thanks THANK YOU

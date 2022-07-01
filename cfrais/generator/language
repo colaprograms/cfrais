@@ -1,0 +1,62 @@
+#/bin/bash
+
+SENTENCES_TO_GENERATE=3000000
+
+if [[ ! -e ../generator/language ]]; then
+    echo >&2 "Please run this script from the generator directory."
+    exit 1
+fi
+
+echo "Part 1. Regenerating the generative grammar."
+echo ""
+# regenerate the grammar from gram files
+python regenerate_grammar.py || exit
+
+echo ""
+echo "Part 2. Generating a lot of sentences from it."
+echo ""
+
+TMPDIR=`mktemp -d /tmp/cfrais.XXXXXXXXXXX`
+
+function rmdirtmp {
+    rm "$TMPDIR"/*
+    rmdir "$TMPDIR"
+}
+
+trap rmdirtmp EXIT
+
+# generate examples
+(python generate_sentences.py || touch "$TMPDIR"/failure) | head -n $SENTENCES_TO_GENERATE | gzip > "$TMPDIR"/generated.gz
+
+if [ -e "$TMPDIR"/failure ]; then
+    exit
+fi
+
+LINES=`gzip -d < "$TMPDIR"/generated.gz | wc -l`
+echo "Generated ${LINES} sentences!"
+
+echo "Part 3. Generating the scorer model from the sentences."
+echo ""
+
+python generate_lm.py \
+    --input_txt "$TMPDIR"/generated.gz \
+    --output_dir "${TMPDIR}" \
+    --top_k 500000 \
+    --kenlm_bins bins \
+    --arpa_order 5 \
+    --max_arpa_memory "40%" \
+    --arpa_prune "0|0|1" \
+    --binary_a_bits 255 \
+    --binary_q_bits 8 \
+    --binary_type trie \
+    --discount_fallback
+
+./generate_scorer_package \
+    --alphabet alphabet.txt \
+    --lm "${TMPDIR}"/lm.binary \
+    --vocab "${TMPDIR}"/vocab-500000.txt \
+    --package ../../models/listen.scorer \
+    --default_alpha 0.931289 \
+    --default_beta 1.183413
+
+echo "Done!"

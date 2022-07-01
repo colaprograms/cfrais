@@ -1,0 +1,3 @@
+#!/bin/bash
+cd cfrais/generator
+bash language

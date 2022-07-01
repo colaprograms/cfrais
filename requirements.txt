@@ -1,0 +1,6 @@
+numpy
+PyAudio
+deepspeech
+progressbar
+webrtcvad
+lark

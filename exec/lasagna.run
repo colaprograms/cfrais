@@ -1,0 +1,17 @@
+#!/bin/bash
+
+PID=/home/pi/chat/log/lasagna/lasagna.pid
+
+if test -e "$PID"
+then
+    /home/pi/chat/tts "It appears that a lasagna program is already running."
+    exit;
+fi;
+
+echo $$ > "$PID"
+
+/home/pi/chat/tts "I shall remind you about the lasagna in sixty minutes."
+/home/pi/chat/waitfor "in 60 minutes" > /home/pi/chat/log/lasagna/lasagna.time
+
+/home/pi/chat/tts "Lasagna complete."
+rm "$PID"

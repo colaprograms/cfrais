@@ -1,0 +1,20 @@
+#!/bin/bash
+
+PID=/home/pi/chat/log/potato/potato.pid
+
+if test -e "$PID"
+then
+    /home/pi/chat/tts "It appears that a potato program is already running."
+    exit;
+fi;
+
+echo $$ > "$PID"
+
+/home/pi/chat/tts "I shall remind you about the potatoes in eighty minutes."
+/home/pi/chat/tts "Did you remember to poke holes in the potatoes?"
+echo "starting potato wait"
+/home/pi/chat/waitfor "in 80 minutes"
+
+/home/pi/chat/tts "All right, that's the potatoes done."
+echo "deleting $PID"
+rm "$PID"

@@ -1,0 +1,13 @@
+Run language to do all the stuff.
+
+Credits:
+
+language, generate_sentences.py, gram.py, regenerate_grammar.py are
+written by me, Hannah Cairns.
+
+alphabet.txt, generate_lm.py, generate_scorer_package are
+part of Mozilla DeepSpeech.
+
+The other binaries are built from Kenneth Heafield's code at
+    https://github.com/kpu/kenlm
+and they work on a Raspberry Pi 4 with raspbian buster.

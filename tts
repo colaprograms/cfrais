@@ -1,0 +1,41 @@
+#!/home/pi/chat/env/bin/python
+
+import re
+import subprocess
+import sys
+import random
+import socket
+from tempfile import TemporaryDirectory
+import os
+
+lineno = 1
+PHONETIC = {}
+for line in open("/home/pi/chat/phonetic.txt"):
+    line = line.strip()
+    if line[0] == "#":
+        pass
+    elif line == "":
+        pass
+    part = re.split(r"\s+", line)
+    if len(part) != 2:
+        print("syntax error on line", lineno)
+        print(part)
+        sys.exit(1)
+    lineno += 1
+    PHONETIC[part[0].lower()] = part[1]
+
+def phonetic(it):
+    tokens = re.split(r'([^a-zA-Z\']+)', it)
+    for j in range(len(tokens)):
+        what = PHONETIC.get(tokens[j].lower(), None)
+        if what is not None:
+            tokens[j] = "<phoneme ph='%s'/>" % what
+    return "".join(tokens)
+
+
+line = " ".join(sys.argv[1:]).strip()
+line = phonetic(line)
+with TemporaryDirectory() as temporarydirectory:
+    fn = os.path.join(temporarydirectory, "out.wav")
+    subprocess.run(["pico2wave", "-len-GB", "-w"+fn, line])
+    subprocess.run(["aplay", fn])
