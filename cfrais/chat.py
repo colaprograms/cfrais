@@ -19,15 +19,48 @@ import pyaudio
 import wave
 import webrtcvad
 
-class that_speech_processor:
+class StatementProcessor:
     def __init__(self, ignore_callback_function):
-        self.voicerecorder = None
         self.ignore_callback_function = ignore_callback_function
 
     def do(self, what):
+        raise NotImplementedError()
+
+    def run_a_program(self, cmd):
+        subprocess.Popen(cmd, close_fds=True)
+
+    def ignore_voice(self):
+        self.ignore_callback_function("ongoing")
+
+    def ignore_voice_until_pause(self):
+        self.ignore_callback_function("untilpause")
+
+    def idle(self):
+        pass
+
+class StatementProcessorWithRecorder(StatementProcessor):
+    def __init__(self, ignore_callback_function):
+        super().__init__(ignore_callback_function)
+        self.voicerecorder = None
+
+    def idle(self):
         if self.voicerecorder:
-            # we are recording a reminder
-            # don't do anything for now
+            self.voicerecorder.idle()
+
+    def start_a_voice_recording(self):
+        self.ignore_voice()
+        self.voicerecorder = record.record(self.stop)
+        self.ignore_voice_until_pause()
+
+    def stop(self):
+        if not self.voicerecorder:
+            raise Exception("tried to stop the voice recording but it was already stopped")
+        self.voicerecorder = None
+
+class ThatStatementProcessor(StatementProcessorWithRecorder):
+    def do(self, what):
+        if self.voicerecorder:
+            # we are recording, don't do anything
             return
 
         if isinstance(what, cfg_parser.RunProgram):
@@ -39,34 +72,8 @@ class that_speech_processor:
             except:
                 pass
 
-        if isinstance(what, cfg_parser.RecordRequest):
-            def stop():
-                self.stop()
-
-            self.ignore_indefinitely()
-            self.voicerecorder = record.record(what, stop)
-            self.ignore_untilpause()
-
-    def run_a_program(self, cmd):
-        subprocess.Popen(cmd, close_fds=True)
-
-
-    def ignore_indefinitely(self):
-        self.ignore_callback_function("ongoing")
-
-
-    def ignore_untilpause(self):
-        self.ignore_callback_function("untilpause")
-
-
-    def idle(self):
-        if self.voicerecorder:
-            self.voicerecorder.idle()
-
-    def stop(self):
-        if not self.voicerecorder:
-            raise Exception("tried to stop the voice recording but it was already stopped")
-        self.voicerecorder = None
+        if isinstance(what, cfg_parser.ShortRequestRecord):
+            self.start_a_voice_recording()
 
 def run_chat(transformer):
     for i in range(4):
@@ -75,7 +82,7 @@ def run_chat(transformer):
                 'models/deepspeech-0.9.3-models.tflite',
                 'models/listen.scorer',
                 parser.parser(transformer),
-                that_speech_processor,
+                ThatStatementProcessor,
             ).start()
                 
         except OSError:

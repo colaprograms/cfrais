@@ -43,12 +43,10 @@ class stream:
     def get_processor(self, processor_generator):
         def ignore(what):
             if what == "ongoing":
-                self.ignore = ("ongoing",)
+                self.ignore = "ongoing"
             elif what == "untilpause":
-                self.ignore = (
-                    "until",
-                    self.vad.stream.get_time()
-                )
+                self.ignore = "until"
+                self.ignore_until = self.vad.stream.get_time()
 
         return processor_generator(ignore)
 

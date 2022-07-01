@@ -1,5 +1,5 @@
 import wave
-import parser
+import cfg_parser
 import os
 import time
 import dateparser
@@ -19,20 +19,30 @@ def write_wav(wave_data, filename):
     wf.writeframes(wave_data)
     wf.close()
 
+def say(z):
+    subprocess.run(["/home/pi/chat/tts", z])
+
+
+def play(zz):
+        subprocess.run([
+            "/usr/bin/mplayer",
+            zz,
+            "-af",
+            "volume=-10",
+            "-quiet",
+            "-quiet"
+        ])
+
 class record:
-    def __init__(self, when, stopcallback):
+    def __init__(self, stopcallback):
         self.stopcallback = stopcallback
         self.stopped = False
         self.make_recording_directory()
         self.count = 0
+        self.start_time = time.time()
         say("Recording.")
 
     def stop(self):
-        timefile = "%s/time" % (self.recording_directory)
-        f = open(timefile, "w")
-        time = f"{self.requestedtime}\n"
-        f.write(time)
-        f.close()
         self.stopped = True
         self.stopcallback()
 
@@ -71,7 +81,7 @@ class record:
         if self.stopped is True:
             raise Exception("stopped record was called")
 
-        if parser.is_cancel_recording(processed_text):
+        if cfg_parser.is_cancel_recording(processed_text):
             self.cancel()
             return
 
@@ -83,13 +93,13 @@ class record:
         if self.count > 9:
             stop = True
 
-        if parser.is_end_recording(processed_text):
+        if cfg_parser.is_end_recording(processed_text):
             stop = True
 
 
         if stop:
             self.stop()
-            play("endrecord.wav")
+            play("cfrais/data/endrecord.wav")
 
         if not quiet:
             write_wav(
