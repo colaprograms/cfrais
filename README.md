@@ -12,4 +12,4 @@ and change the lark.Transformer in
 and you also have to add another statement to main.lark.
 
 Then you have to add stuff to interpret your new objects
-in chat.py. This is pretty annoying but that's how it is for now.
+in cfrais/chat.py. This is pretty annoying but that's how it is for now.
