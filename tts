@@ -10,7 +10,7 @@ import os
 
 lineno = 1
 PHONETIC = {}
-for line in open("/home/pi/chat/phonetic.txt"):
+for line in open("tts-phonetic-pronunciations.txt"):
     line = line.strip()
     if line[0] == "#":
         pass
