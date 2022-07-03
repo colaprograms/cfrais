@@ -1,5 +1,0 @@
-%import .short.short
-%import .run.run
-
-start: short
-       | run
