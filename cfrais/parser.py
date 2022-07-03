@@ -2,11 +2,6 @@ import os, sys, re
 import lark
 from lark import Token
 
-PATH_TO_LARKS = [
-    "context_free_grammar",
-    "../context_free_grammar",
-]
-
 def strip(token):
     assert isinstance(token, Token)
     ix = token.type.index("__")
@@ -51,22 +46,13 @@ def assertare(token, check):
         print("    " + str(check))
         raise Exception()
 
-def explanation():
-    print("You have to write cfg_parser.py yourself, to parse")
-    print("your generated grammar.")
-
-def path(fnam):
-    for option in PATH_TO_LARKS:
-        j = os.path.join(option, fnam)
-        if os.path.exists(j):
-            return option
-    
 class parser:
-    def __init__(self, transformer, fnam="main.lark"):
-        pathtolarks = path(fnam)
-        grammar = open(os.path.join(pathtolarks,fnam)).read()
-        self.pars = lark.Lark(grammar, import_paths=[pathtolarks])
-        self.form = transformer
+    def __init__(self, target_direct, fnam="__main.lark"):
+        self.pars = lark.Lark(
+            open(os.path.join(target_direct, fnam)).read(),
+            import_paths = [target_direct],
+        )
+        self.form = tupler()
 
     def parse(self, z):
         try:
@@ -79,10 +65,19 @@ class parser:
         z = self.form.transform(z) if z is not None else z
         return z
 
-def run_a_simple_parser(transformer):
+from lark.visitors import Transformer
+class tupler(Transformer):
+    def start(self, args):
+        return args
+    def __default__(self, data, children, meta):
+        return (data, children)
+    def __default_token__(self, token):
+        return strip(token)
+
+if __name__ == "__main__":
     print("Input sentences to parse.")
 
-    p = parser(transformer)
+    it = parser("../context_free_grammar.generated")
 
     while True:
         try:
@@ -91,12 +86,15 @@ def run_a_simple_parser(transformer):
             break
         if line == "":
             break
+
         print("parsing:")
-        pp = p.parse(line)
-        if pp:
-            print(pp.pretty())
-        print()
+        utterance = it.transform(line)
+        if utterance:
+            print(utterance.pretty())
+        else:
+            print("Couldn't parse!")
+
         print("transforming:")
-        pp = p.transform(line)
-        print(pp)
+        import json
+        print(json.dumps(tupler().transform(utterance)))
         print()

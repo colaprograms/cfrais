@@ -5,25 +5,30 @@ import gram
 import random
 import select
 
-def make_grammar_list():
+def make_grammar_list(source_direct):
     grammar_list = []
-    grammar_files = gram.grammars()
-    for what in grammar_files:
+    namelist=gram.grammar_files(source_direct)
+    for name,source in namelist:
         grammar = gram.probabilistic_grammar()
-        grammar.read(what + ".gram")
-        grammar_start_token = os.path.basename(what)
+        grammar.read(source)
+        grammar_start_token = name
         grammar_list.append((grammar, grammar_start_token))
     return grammar_list
 
-def generate_random_tokens():
-    that = make_grammar_list()
+def generate_random_tokens(source_direct):
+    that=make_grammar_list(source_direct)
     while True:
         grammar, grammar_start_token = random.choice(that)
         out = grammar.generate(grammar_start_token)
         yield " ".join(out)
 
 if __name__ == "__main__":
-    z = generate_random_tokens()
+    if len(sys.argv) != 2:
+        print("generate_sentences.py <directory to read the gram files from>", file=sys.stderr)
+        sys.exit(1)
+
+    source_direct = sys.argv[1]
+    z = generate_random_tokens(source_direct)
 
     count = 0
     while True:

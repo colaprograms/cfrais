@@ -1,5 +1,4 @@
 import wave
-import cfg_parser
 import os
 import time
 import dateparser
@@ -34,12 +33,14 @@ def play(zz):
         ])
 
 class record:
-    def __init__(self, stopcallback):
+    def __init__(self, stopcallback, is_end_recording, is_cancel_recording):
         self.stopcallback = stopcallback
         self.stopped = False
         self.make_recording_directory()
         self.count = 0
         self.start_time = time.time()
+        self.is_end_recording = is_end_recording
+        self.is_cancel_recording = is_cancel_recording
         say("Recording.")
 
     def stop(self):
@@ -81,7 +82,7 @@ class record:
         if self.stopped is True:
             raise Exception("stopped record was called")
 
-        if cfg_parser.is_cancel_recording(processed_text):
+        if self.is_cancel_recording(processed_text):
             self.cancel()
             return
 
@@ -93,7 +94,7 @@ class record:
         if self.count > 9:
             stop = True
 
-        if cfg_parser.is_end_recording(processed_text):
+        if self.is_end_recording(processed_text):
             stop = True
 
 

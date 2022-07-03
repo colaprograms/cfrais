@@ -1,6 +1,5 @@
 import sys, re, random
-
-DIRECTORY_WITH_GRAMMAR_INSIDE = "../../context_free_grammar"
+import os
 
 class probabilistic_grammar:
     def __init__(self):
@@ -54,6 +53,7 @@ class probabilistic_grammar:
                         break
                     out.extend(curwords)
             self.add_rule(name, weight, out)
+        f.close()
 
     def add_rule(self, name, weight, out):
         self.rule.setdefault(name, [])
@@ -68,7 +68,9 @@ class probabilistic_grammar:
             for what in self.rule[name]:
                 print("    %4d: %s" % (what['weight'], " ".join(what['out'])))
     
-    def writelark(self, fo):
+    def writelark(self, fn):
+        fo = open(fn, "w")
+
         literals = {}
         def addliteral(tex):
             literals[tex] = tex.replace("'", "_")
@@ -87,15 +89,14 @@ class probabilistic_grammar:
                 rule = " ".join(format(j) for j in what['out'])
                 if first:
                     fo.write("%s: %s\n" % (name, rule))
-                    first = False
-                    # rar
                 else:
                     fo.write("    | %s\n" % rule)
+                first = False
 
-        # rar
         for z in literals:
             the = literals[z]
             fo.write("%s: \"%s \"\n" % (the, z))
+        fo.close()
 
     def generate(self, z):
         if z == z.upper():
@@ -123,22 +124,34 @@ def remove_suffix(a, b):
     assert a.endswith(b)
     return a[:-len(b)]
 
-def grammars():
-    import glob
-    return [remove_suffix(fnam, ".gram") for fnam in
-            glob.glob(DIRECTORY_WITH_GRAMMAR_INSIDE + "/*.gram")]
+def grammar_files(source):
+    name = []
+    for fnam in os.listdir(source):
+        if fnam.endswith(".gram"):
+            if fnam == "__main.gram":
+                raise Exception("can't have a grammar called 'main'")
+            that = remove_suffix(fnam, ".gram")
+            name.append((
+                that,
+                os.path.join(source, that + ".gram")
+            ))
+    return name
 
-def test():
-    p = probabilistic_grammar()
-    p.read("test.gram")
-    p.writelark(sys.stdout)
+def regenerate_grammar(source_direct, target_direct):
+    name_list = grammar_files(source_direct)
+    for name,source in name_list:
+        target = os.path.join(target_direct, name + ".lark")
+        print("making %s.lark..." % name, end="")
+        grammar = probabilistic_grammar()
+        grammar.read(source)
+        grammar.writelark(target)
+        print(" done")
 
-def regenerate_grammar():
-    for fnam in grammars():
-        print("making %s.lark from %s.gram" % (fnam, fnam))
-        p = probabilistic_grammar()
-        p.read(fnam + ".gram")
-        fo = open(fnam + ".lark", "w")
-        fo.truncate(0)
-        p.writelark(fo)
-        fo.close()
+    mainfn = os.path.join(target_direct, "__main.lark")
+    print("making __main.lark...", end="")
+    fo = open(mainfn, "w")
+    for name,source in name_list:
+        fo.write("%%import .%s.%s\n" % (name, name))
+    fo.write("\nstart: " + "|".join(name for name,_ in name_list) + "\n")
+    fo.close()
+    print(" done")

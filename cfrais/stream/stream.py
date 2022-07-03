@@ -11,9 +11,9 @@ DEFAULTS = {
     'device': DEFAULT_DEVICE
 }
 
-import time, logging
+import time
 from datetime import datetime
-import threading, collections, queue, os, os.path
+import threading, collections, queue, os, os.path, sys
 import deepspeech
 import numpy as np
 import pyaudio
@@ -89,7 +89,7 @@ class stream:
             else:
                 text = neural_speech_processor.finishStream()
 
-                print(text)
+                print(text, file=sys.stderr)
 
                 data = None
 
@@ -101,7 +101,7 @@ class stream:
                     pass
 
                 if data is not None:
-                    print("    " + str(data))
+                    #print("    " + str(data))
                     statement_processor.do(data)
 
                 if statement_processor.voicerecorder:

@@ -1,5 +1,3 @@
 import cfrais
-import cfg_parser
 
-transformer = cfg_parser.transformer()
-cfrais.run_chat(transformer)
+cfrais.run_chat("context_free_grammar.generated")

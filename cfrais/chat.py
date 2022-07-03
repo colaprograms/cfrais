@@ -1,6 +1,5 @@
 #!/home/pi/chat/env/bin/python
 
-import cfg_parser
 from . import record
 from . import parser
 from .stream import stream
@@ -62,26 +61,15 @@ class ThatStatementProcessor(StatementProcessorWithRecorder):
         if self.voicerecorder:
             # we are recording, don't do anything
             return
+        print(what)
 
-        if isinstance(what, cfg_parser.RunProgram):
-            program = what.name.lower().replace(" ", "-")
-            program += ".run"
-            try:
-                print("running exec/%s" % program)
-                self.run_a_program(["exec/" + program])
-            except:
-                pass
-
-        if isinstance(what, cfg_parser.ShortRequestRecord):
-            self.start_a_voice_recording()
-
-def run_chat(transformer):
+def run_chat(larkdir):
     for i in range(4):
         try:
             stream(
                 'models/deepspeech-0.9.3-models.tflite',
                 'models/listen.scorer',
-                parser.parser(transformer),
+                parser.parser(larkdir),
                 ThatStatementProcessor,
             ).start()
                 

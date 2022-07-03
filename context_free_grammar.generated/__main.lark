@@ -1,0 +1,4 @@
+%import .run.run
+%import .short.short
+
+start: run|short
