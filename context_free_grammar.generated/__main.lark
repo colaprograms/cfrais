@@ -1,4 +1,5 @@
 %import .run.run
+%import .calc.calc
 %import .short.short
 
-start: run|short
+start: run|calc|short

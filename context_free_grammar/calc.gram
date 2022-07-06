@@ -1,0 +1,70 @@
+calc COMPUTER calc_action
+calc COMPUTER PLEASE calc_action
+
+calc_action ADD number TO number
+calc_action MULTIPLY number BY number
+calc_action SUBTRACT number FROM number
+calc_action DIVIDE number BY number
+
+number number_09
+number number_99
+number number_99_99
+number number_999_999
+number number_999_999_999
+number number_999_999_999_999
+
+number_09 ZERO
+number_09*9 number_19
+
+number_19 ONE
+number_19 TWO
+number_19 THREE
+number_19 FOUR
+number_19 FIVE
+number_19 SIX
+number_19 SEVEN
+number_19 EIGHT
+number_19 NINE
+
+number_99 number_11_to_19
+number_99 TWENTY optionally_a_number_19
+number_99 THIRTY optionally_a_number_19
+number_99 FORTY optionally_a_number_19
+number_99 FIFTY optionally_a_number_19
+number_99 SIXTY optionally_a_number_19
+number_99 SEVENTY optionally_a_number_19
+number_99 EIGHTY optionally_a_number_19
+number_99 NINETY optionally_a_number_19
+
+number_11_to_19 ELEVEN
+number_11_to_19 TWELVE
+number_11_to_19 THIRTEEN
+number_11_to_19 FOURTEEN
+number_11_to_19 FIFTEEN
+number_11_to_19 SIXTEEN
+number_11_to_19 SEVENTEEN
+number_11_to_19 EIGHTEEN
+number_11_to_19 NINETEEN
+
+optionally_a_number_19
+optionally_a_number_19 number_19
+
+number_99_99 number_99 HUNDRED
+number_99_99 number_99 HUNDRED number_99
+number_99_99 number_99 HUNDRED AND number_99
+
+number_999 number_19 HUNDRED
+number_999 number_19 HUNDRED number_99
+number_999 number_19 HUNDRED AND number_99
+
+number_999_999 number_999 THOUSAND
+number_999_999 number_999 THOUSAND number_999
+number_999_999 number_999 THOUSAND AND number_999
+
+number_999_999_999 number_999 MILLION
+number_999_999_999 number_999 MILLION number_999_999
+number_999_999_999 number_999 MILLION AND number_999_999_999
+
+number_999_999_999_999 number_999 BILLION
+number_999_999_999_999 number_999 BILLION number_999_999_999
+number_999_999_999_999 number_999 BILLION AND number_999_999_999

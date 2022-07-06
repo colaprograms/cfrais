@@ -86,9 +86,14 @@ class stream:
                 )
 
                 wav_data.extend(frame)
+
+                decode = neural_speech_processor. \
+                    intermediateDecode()
+                statement_processor.text(decode, partial=True)
             else:
                 text = neural_speech_processor.finishStream()
 
+                statement_processor.text(text, partial=False)
                 print(text, file=sys.stderr)
 
                 data = None

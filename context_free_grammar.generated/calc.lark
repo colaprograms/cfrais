@@ -1,0 +1,99 @@
+calc: COMPUTER calc_action
+    | COMPUTER PLEASE calc_action
+calc_action: ADD number TO number
+    | MULTIPLY number BY number
+    | SUBTRACT number FROM number
+    | DIVIDE number BY number
+number: number_09
+    | number_99
+    | number_99_99
+    | number_999_999
+    | number_999_999_999
+    | number_999_999_999_999
+number_09: ZERO
+    | number_19
+number_19: ONE
+    | TWO
+    | THREE
+    | FOUR
+    | FIVE
+    | SIX
+    | SEVEN
+    | EIGHT
+    | NINE
+number_99: number_11_to_19
+    | TWENTY optionally_a_number_19
+    | THIRTY optionally_a_number_19
+    | FORTY optionally_a_number_19
+    | FIFTY optionally_a_number_19
+    | SIXTY optionally_a_number_19
+    | SEVENTY optionally_a_number_19
+    | EIGHTY optionally_a_number_19
+    | NINETY optionally_a_number_19
+number_11_to_19: ELEVEN
+    | TWELVE
+    | THIRTEEN
+    | FOURTEEN
+    | FIFTEEN
+    | SIXTEEN
+    | SEVENTEEN
+    | EIGHTEEN
+    | NINETEEN
+optionally_a_number_19: 
+    | number_19
+number_99_99: number_99 HUNDRED
+    | number_99 HUNDRED number_99
+    | number_99 HUNDRED AND number_99
+number_999: number_19 HUNDRED
+    | number_19 HUNDRED number_99
+    | number_19 HUNDRED AND number_99
+number_999_999: number_999 THOUSAND
+    | number_999 THOUSAND number_999
+    | number_999 THOUSAND AND number_999
+number_999_999_999: number_999 MILLION
+    | number_999 MILLION number_999_999
+    | number_999 MILLION AND number_999_999_999
+number_999_999_999_999: number_999 BILLION
+    | number_999 BILLION number_999_999_999
+    | number_999 BILLION AND number_999_999_999
+COMPUTER: "COMPUTER "
+PLEASE: "PLEASE "
+ADD: "ADD "
+TO: "TO "
+MULTIPLY: "MULTIPLY "
+BY: "BY "
+SUBTRACT: "SUBTRACT "
+FROM: "FROM "
+DIVIDE: "DIVIDE "
+ZERO: "ZERO "
+ONE: "ONE "
+TWO: "TWO "
+THREE: "THREE "
+FOUR: "FOUR "
+FIVE: "FIVE "
+SIX: "SIX "
+SEVEN: "SEVEN "
+EIGHT: "EIGHT "
+NINE: "NINE "
+TWENTY: "TWENTY "
+THIRTY: "THIRTY "
+FORTY: "FORTY "
+FIFTY: "FIFTY "
+SIXTY: "SIXTY "
+SEVENTY: "SEVENTY "
+EIGHTY: "EIGHTY "
+NINETY: "NINETY "
+ELEVEN: "ELEVEN "
+TWELVE: "TWELVE "
+THIRTEEN: "THIRTEEN "
+FOURTEEN: "FOURTEEN "
+FIFTEEN: "FIFTEEN "
+SIXTEEN: "SIXTEEN "
+SEVENTEEN: "SEVENTEEN "
+EIGHTEEN: "EIGHTEEN "
+NINETEEN: "NINETEEN "
+HUNDRED: "HUNDRED "
+AND: "AND "
+THOUSAND: "THOUSAND "
+MILLION: "MILLION "
+BILLION: "BILLION "

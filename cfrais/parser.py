@@ -10,33 +10,6 @@ def strip(token):
 def stripall(items):
     return " ".join([strip(z) for z in items])
 
-def isa(token, check):
-    def validate(string, check):
-        ix = string.find("__")
-        return (string[ix+2:] if ix >= 0 else string) == check
-
-    if isinstance(check, type):
-        return isinstance(token, check)
-    elif isinstance(check, str):
-        if isinstance(token, Token):
-            # if the token in the gram file has apostrophes,
-            # they will be replaced by underscores. so if we
-            # want to match the token THEY'LL in the gram file,
-            # we have to compare the type to THEY_LL.
-            check = check.replace("'", "_")
-            return validate(token.type, check)
-        if isinstance(token, lark.Tree):
-            return validate(token.data, check)
-        return False
-    else:
-        raise Exception("check should be a type or string")
-    raise Exception("should have returned already")
-
-def are(token, check):
-    if len(token) != len(check):
-        return False
-    return all(isa(a, b) for (a, b) in zip(token, check))
-
 def assertare(token, check):
     value = are(token, check)
     if not value:
@@ -72,7 +45,11 @@ class tupler(Transformer):
     def __default__(self, data, children, meta):
         return (data, children)
     def __default_token__(self, token):
-        return strip(token)
+        # in gram.py we replace all the apostrophes
+        # with underscores, so here we put them back
+        token = strip(token)
+        token = token.replace("_", "'")
+        return token
 
 if __name__ == "__main__":
     print("Input sentences to parse.")
@@ -88,7 +65,7 @@ if __name__ == "__main__":
             break
 
         print("parsing:")
-        utterance = it.transform(line)
+        utterance = it.parse(line)
         if utterance:
             print(utterance.pretty())
         else:

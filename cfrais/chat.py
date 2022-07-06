@@ -37,6 +37,9 @@ class StatementProcessor:
     def idle(self):
         pass
 
+    def text(self, text, partial=False):
+        pass
+
 class StatementProcessorWithRecorder(StatementProcessor):
     def __init__(self, ignore_callback_function):
         super().__init__(ignore_callback_function)
@@ -62,6 +65,9 @@ class ThatStatementProcessor(StatementProcessorWithRecorder):
             # we are recording, don't do anything
             return
         print(what)
+
+    def text(self, text, partial=False):
+        pass #print(partial, text)
 
 def run_chat(larkdir):
     for i in range(4):

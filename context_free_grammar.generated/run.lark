@@ -1,6 +1,5 @@
 run: COMPUTER RUN PROGRAM program_name
-program_name: POTATO
-    | LASAGNA
+program_name: FROSTING
     | greek_letter numbers
 greek_letter: ALPHA
     | BETA
@@ -41,8 +40,7 @@ number_09: ZERO
 COMPUTER: "COMPUTER "
 RUN: "RUN "
 PROGRAM: "PROGRAM "
-POTATO: "POTATO "
-LASAGNA: "LASAGNA "
+FROSTING: "FROSTING "
 ALPHA: "ALPHA "
 BETA: "BETA "
 GAMMA: "GAMMA "

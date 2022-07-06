@@ -5,9 +5,7 @@ run {
     program_name
 }
 
-program_name            POTATO
-
-program_name            LASAGNA
+program_name            FROSTING
 
 program_name            greek_letter numbers
 
