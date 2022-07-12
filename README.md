@@ -11,8 +11,7 @@ To set it up:
 
 To run:
 ```
-    . env/bin/activate
-    python run_cfrais.py
+    ./startcfrais
 ```
 
 To change the context-free language it detects:

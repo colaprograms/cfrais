@@ -26,6 +26,7 @@ number_19 SEVEN
 number_19 EIGHT
 number_19 NINE
 
+number_99 number_19
 number_99 number_11_to_19
 number_99 TWENTY optionally_a_number_19
 number_99 THIRTY optionally_a_number_19

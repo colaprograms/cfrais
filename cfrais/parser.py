@@ -41,15 +41,17 @@ class parser:
 from lark.visitors import Transformer
 class tupler(Transformer):
     def start(self, args):
-        return args
+        return args[0]
     def __default__(self, data, children, meta):
-        return (data, children)
+        if "__" in data:
+            pref, data = data.split("__", 1)
+        return (data, *children)
     def __default_token__(self, token):
         # in gram.py we replace all the apostrophes
         # with underscores, so here we put them back
         token = strip(token)
         token = token.replace("_", "'")
-        return token
+        return token,
 
 if __name__ == "__main__":
     print("Input sentences to parse.")

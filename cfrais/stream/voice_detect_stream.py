@@ -12,6 +12,23 @@ import numpy as np
 import webrtcvad
 import samplerate
 
+def quietly_start_pyaudio():
+    "Redirect stderr to nothing, start pyaudio, and then put old stderr back."
+    devnull = os.open(os.devnull, os.O_WRONLY)
+
+    STDERR_FILENO = sys.stderr.fileno()
+    saved_stderr = os.dup(STDERR_FILENO)
+    sys.stderr.flush()
+    os.dup2(devnull, STDERR_FILENO)
+    os.close(devnull)
+
+    pa = pyaudio.PyAudio()
+
+    os.dup2(saved_stderr, STDERR_FILENO)
+    os.close(saved_stderr)
+
+    return pa
+
 class Audio(object):
     FORMAT = pyaudio.paInt16
     # Network/VAD rate-space
@@ -30,7 +47,7 @@ class Audio(object):
         self.sample_rate = self.RATE_PROCESS
         self.block_size = int(self.RATE_PROCESS / float(self.BLOCKS_PER_SECOND))
         self.block_size_input = int(self.input_rate / float(self.BLOCKS_PER_SECOND))
-        self.pa = pyaudio.PyAudio()
+        self.pa = "get fed up with the errors" and quietly_start_pyaudio()
 
         kwargs = {
             'format': self.FORMAT,

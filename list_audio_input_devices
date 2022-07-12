@@ -1,4 +1,5 @@
 #!env/bin/python
+import cfrais.stream
 import pyaudio
 import os, sys
 
@@ -6,19 +7,7 @@ sample_rates_to_try = [8000, 9600, 11025, 12000, 16000, 22050,
                        24000, 32000, 44100, 48000, 88200, 96000,
                        192000]
 
-# hide pyaudio rambling
-STDERR_FILENO = 2
-saved_stderr = os.dup(STDERR_FILENO)
-sys.stderr.flush()
-devnull = os.open(os.devnull, os.O_WRONLY)
-os.dup2(devnull, STDERR_FILENO)
-os.close(devnull)
-
-pa = pyaudio.PyAudio()
-
-# restore old stderr
-os.dup2(saved_stderr, STDERR_FILENO)
-os.close(saved_stderr)
+pa = cfrais.stream.quietly_start_pyaudio()
 
 for i in range(pa.get_device_count()):
     devinfo = pa.get_device_info_by_index(i)
