@@ -1,4 +1,4 @@
-#!/home/pi/chat/env/bin/python
+#!env/bin/python
 
 import re
 import subprocess

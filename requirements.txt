@@ -4,3 +4,4 @@ deepspeech
 progressbar
 webrtcvad
 lark
+samplerate

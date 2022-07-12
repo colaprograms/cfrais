@@ -1,0 +1,44 @@
+#!env/bin/python
+import pyaudio
+import os, sys
+
+sample_rates_to_try = [8000, 9600, 11025, 12000, 16000, 22050,
+                       24000, 32000, 44100, 48000, 88200, 96000,
+                       192000]
+
+# hide pyaudio rambling
+STDERR_FILENO = 2
+saved_stderr = os.dup(STDERR_FILENO)
+sys.stderr.flush()
+devnull = os.open(os.devnull, os.O_WRONLY)
+os.dup2(devnull, STDERR_FILENO)
+os.close(devnull)
+
+pa = pyaudio.PyAudio()
+
+# restore old stderr
+os.dup2(saved_stderr, STDERR_FILENO)
+os.close(saved_stderr)
+
+for i in range(pa.get_device_count()):
+    devinfo = pa.get_device_info_by_index(i)
+    if devinfo['maxInputChannels'] == 0:
+        # this isn't an input device so skip
+        continue
+
+    print("Device %d:" % i)
+    print("    Name: %s" % devinfo['name'])
+    supported_sample_rates = []
+    args = {'input_device': i,
+            'input_channels': 1,
+            'input_format': pyaudio.paInt16}
+    for sample_rate in sample_rates_to_try:
+        try:
+            if pa.is_format_supported(float(sample_rate), **args):
+                supported_sample_rates.append(sample_rate)
+            pass
+        except ValueError:
+            pass
+    sample_rate_string = " ".join([str(rate)
+        for rate in supported_sample_rates])
+    print("    Sample rates: %s" % sample_rate_string)

@@ -8,7 +8,9 @@ import sys
 import os
 import queue
 from collections import deque
+import numpy as np
 import webrtcvad
+import samplerate
 
 class Audio(object):
     FORMAT = pyaudio.paInt16
@@ -41,12 +43,59 @@ class Audio(object):
 
         if self.device:
             kwargs['input_device_index'] = self.device
+        self.resampler = None
+        self.leftover = b""
+        self.lefttime = None
         self.stream = self.pa.open(**kwargs)
         self.stream.start_stream()
 
     def read(self):
         """Return a block of audio data, blocking if necessary."""
         return self.buffer_queue.get()
+
+    def resample(self, data):
+        if not self.resampler:
+            self.resampler = samplerate.converters.Resampler('sinc_best', 1)
+        data16 = np.fromstring(data, dtype=np.int16)
+        resample_size = 320 # required by vad
+        ratio = resample_size/data16.shape[0]
+        resample = self.resampler.process(data16, ratio, end_of_input=False)
+        resample16 = np.array(resample, dtype=np.int16)
+        outdata = resample16.tostring()
+        return outdata
+
+    def read_resampled_raw(self):
+        that, time_i_was_reincarnated_as_a_slime = self.buffer_queue.get()
+        return self.resample(that), time_i_was_reincarnated_as_a_slime
+
+    def read_resampled(self):
+        """This function has to return exactly 640 bytes of audio data
+        (320 samples int16) because VAD wants exactly that amount."""
+        # Get the leftover audio data from last time
+        data = self.leftover
+        # and the time corresponding to its start.
+        starttime = self.lefttime
+
+        while len(data) < 640:
+            that, time = self.read_resampled_raw()
+            if len(data) == 0:
+                # If we didn't have any stored audio data, then the start
+                # of our stored data is the time we just read.
+                starttime = time
+
+            leftover_time_reference = time
+            time_per_character = 2/self.sample_rate
+            time_reference_offset = len(data)
+            data += that
+
+        # Return exactly 640 bytes, saving all the leftovers
+        self.leftover = data[640:]
+        # Guess the time of the first leftover byte
+        lefttime = leftover_time_reference
+        lefttime += (640 - time_reference_offset) * time_per_character
+        self.lefttime = lefttime
+        # Here you go, exactly 640 bytes!!
+        return (data[:640], starttime)
 
     def destroy(self):
         self.stream.stop_stream()

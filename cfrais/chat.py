@@ -1,5 +1,3 @@
-#!/home/pi/chat/env/bin/python
-
 from . import record
 from . import parser
 from .stream import stream
@@ -78,6 +76,7 @@ def run_chat(larkdir):
                 parser.parser(larkdir),
                 ThatStatementProcessor,
             ).start()
+            return
                 
         except OSError:
             import traceback
