@@ -23,7 +23,8 @@ To change the context-free language it detects:
     cd .. 
     ./generate_language_model
 ```
-This last part only works on Raspberry PI. To get it to work on anything else, you'd have to replace the binaries in cfrais/generator with the appropriate ones from DeepSpeech (https://github.com/mozilla/DeepSpeech)
+This last thing uses binaries that were compiled for Raspberry Pi, so if you want to run the generator on anything else, you'd have to compile new binaries and put them in cfrais/generator and cfrais/generator/bins.
+See https://deepspeech.readthedocs.io/en/v0.9.3/Scorer.html
 
 *Note:*
 Change the RATE and DEVICE at the top of cfrais/chat.py to
