@@ -15,16 +15,19 @@ To run:
     python run_cfrais.py
 ```
 
-For now you have to change the DEFAULT_SAMPLE_RATE and
-DEFAULT_DEVICE in cfrais/stream/stream.py to match your microphone.You can figure those out with list_audio_input_devices.
-Put the device number for DEFAULT_DEVICE, and your favourite
-sample rate for DEFAULT_SAMPLE_RATE. The native sample rate
+To change the context-free language it detects:
+```
+    cd context_free_grammar
+    (edit the rules in *.gram, possibly adding more files)
+    cd .. 
+    ./generate_language_model
+```
+
+*Note:*
+Change the RATE and DEVICE at the top of cfrais/chat.py to
+match your microphone. If you don't know them, you can figure
+them out with list_audio_input_devices.
+
+The native sample rate
 of the VAD and model are 16000, so if the sample rate isn't
 16000 then it will resample using libsamplerate.
-
-*Note:* I ripped it out of my larger system that works ok,
-but I refactored it a lot and I'm not sure what is broken.
-
-To change the language, you have to change the rules in
-    context_free_grammar/*.gram
-and then rerun generate_language_model.

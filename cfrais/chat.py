@@ -2,8 +2,9 @@ from . import record
 from . import parser
 from .stream import stream
 
-AGGRESSIVENESS = 3
+# Input rate and device! Change these if yours are different, eh
 RATE = 16000
+DEVICE = 1
 
 # the code below mostly comes from DeepSpeech-examples/mic_vad_streaming
 
@@ -75,6 +76,8 @@ def run_chat(larkdir):
                 'models/listen.scorer',
                 parser.parser(larkdir),
                 ThatStatementProcessor,
+                input_rate=RATE,
+                device=DEVICE,
             ).start()
             return
                 
