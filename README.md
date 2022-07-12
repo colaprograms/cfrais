@@ -11,7 +11,7 @@ To set it up:
 
 To run:
 ```
-    ./startcfrais
+    ./startup
 ```
 
 To change the context-free language it detects:
