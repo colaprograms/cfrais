@@ -1,7 +1,6 @@
 import wave
 import os
 import time
-import dateparser
 import random
 import subprocess
 import datetime
